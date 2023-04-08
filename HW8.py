@@ -89,8 +89,9 @@ def find_rest_in_building(building_num, db):
     cur = conn.cursor()
 
     l = []
-    content = cur.execute("""SELECT restaurants.name FROM restaurants JOIN buildings ON
+    content = cur.execute("""SELECT restaurants.name, restaurants.rating FROM restaurants JOIN buildings ON
     restaurants.building_id = buildings.id WHERE buildings.building = (?)""",(building_num,)).fetchall()
+    content = sorted(content,key=lambda x:x[1], reverse=True)
     for place in content:
         l.append(place[0])
 
@@ -110,6 +111,7 @@ def get_highest_rating(db): #Do this through DB as well
     The second bar chart displays the buildings along the y-axis and their ratings along the x-axis 
     in descending order (by rating).
     """
+
     pass
 
 #Try calling your functions here
@@ -172,4 +174,4 @@ class TestHW8(unittest.TestCase):
 
 if __name__ == '__main__':
     main()
-    # unittest.main(verbosity=2)
+    unittest.main(verbosity=2)

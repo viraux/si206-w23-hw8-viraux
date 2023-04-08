@@ -1,6 +1,6 @@
-# Your name: 
-# Your student id:
-# Your email:
+# Your name: AJ deVaux
+# Your student id: 6472 4356
+# Your email: ajdv@umich.edu
 # List who you have worked with on this homework:
 
 import matplotlib.pyplot as plt
@@ -15,6 +15,31 @@ def load_rest_data(db):
     and each inner key is a dictionary, where the key:value pairs should be the category, 
     building, and rating for the restaurant.
     """
+
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+db)
+    cur = conn.cursor()
+    d = {}
+    data = cur.execute("SELECT * FROM restaurants").fetchall()
+    for place in data:
+        name = place[1]
+        type = cur.execute("""SELECT Categories.category FROM Categories JOIN restaurants
+        ON Categories.id = (?)""",(place[-3],)).fetchone()[0]
+        # print(type)
+        location = cur.execute("""SELECT Buildings.building FROM Buildings JOIN restaurants
+        ON Buildings.id = (?)""",(place[-2],)).fetchone()[0]
+        # print(location)
+        rating = place[-1]
+
+        d[name] = {'category':type, 'building':location,'rating':rating}
+
+    # print(d)
+    return d
+
+
+
+
+
     pass
 
 def plot_rest_categories(db):
@@ -49,6 +74,7 @@ def get_highest_rating(db): #Do this through DB as well
 
 #Try calling your functions here
 def main():
+    data = load_rest_data("South_U_Restaurants.db")
     pass
 
 class TestHW8(unittest.TestCase):
@@ -100,4 +126,4 @@ class TestHW8(unittest.TestCase):
 
 if __name__ == '__main__':
     main()
-    unittest.main(verbosity=2)
+    # unittest.main(verbosity=2)

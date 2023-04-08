@@ -71,7 +71,7 @@ def plot_rest_categories(db):
     ax.set_ylabel("Counts")
 
     fig.savefig("part2_graph")
-
+    plt.subplots_adjust(left=0.3)
     plt.show()
     return d
 
@@ -112,6 +112,70 @@ def get_highest_rating(db): #Do this through DB as well
     in descending order (by rating).
     """
 
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+db)
+    cur = conn.cursor()
+
+    fig = plt.figure(figsize=(12,8))
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+
+    data = cur.execute("""SELECT * FROM Categories""").fetchall()
+    # print(data)
+    l = []
+    for type in data:
+        average = cur.execute("""SELECT AVG(restaurants.rating) FROM restaurants JOIN categories
+            ON restaurants.category_id = categories.id WHERE categories.category = (?)""",
+            (type[1],)).fetchone()
+        # print(average)
+        l.append((type[1],round(average[0],1)))
+
+    l = sorted(l, key=lambda x:x[1])
+    # print(l)
+    for cat in l:
+        ax1.barh(cat[0],cat[1], color='orange', linewidth=3)
+    
+    ax1.set_xlabel("Average Rating")
+    ax1.set_ylabel("Category")
+
+    data2 = cur.execute("""SELECT * FROM Buildings""").fetchall()
+    # print(data)
+    l2 = []
+    for type in data2:
+        average = cur.execute("""SELECT AVG(restaurants.rating) FROM restaurants JOIN Buildings
+            ON restaurants.building_id = buildings.id WHERE buildings.building = (?)""",
+            (type[1],)).fetchone()
+        # print(average)
+        l2.append((type[1],round(average[0],1)))
+
+    l2 = sorted(l2, key=lambda x:x[1])
+    # print(l2)
+    for cat in l2:
+        ax2.barh(str(cat[0]),cat[1], color='orange', linewidth=3)
+    
+    ax2.set_xlabel("Average Rating")
+    ax2.set_ylabel("Building")
+
+    plt.subplots_adjust(left=0.2)
+
+    fig.savefig("extra_credit_graph")
+
+    plt.show()
+
+
+    # print(l,l2)
+
+    return [l[-1],l2[-1]]
+
+
+    
+
+
+
+
+
+
+
     pass
 
 #Try calling your functions here
@@ -121,8 +185,10 @@ def main():
     # data2 = plot_rest_categories("South_U_Restaurants.db")
     # print(data2)
 
-    data3 = find_rest_in_building(1140,"South_U_Restaurants.db")
-    print(data3)
+    # data3 = find_rest_in_building(1140,"South_U_Restaurants.db")
+    # print(data3)
+
+    # get_highest_rating("South_U_Restaurants.db")
     pass
 
 class TestHW8(unittest.TestCase):

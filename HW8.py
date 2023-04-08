@@ -69,9 +69,8 @@ def plot_rest_categories(db):
         ax.barh(desc_data[i][0],desc_data[i][1], color='orange', linewidth=3)
     ax.set_xlabel("Category")
     ax.set_ylabel("Counts")
-
-    fig.savefig("part2_graph")
     plt.subplots_adjust(left=0.3)
+    fig.savefig("category_graph")
     plt.show()
     return d
 
@@ -180,15 +179,15 @@ def get_highest_rating(db): #Do this through DB as well
 
 #Try calling your functions here
 def main():
-    # data = load_rest_data("South_U_Restaurants.db")
+    data = load_rest_data("South_U_Restaurants.db")
 
-    # data2 = plot_rest_categories("South_U_Restaurants.db")
+    data2 = plot_rest_categories("South_U_Restaurants.db")
     # print(data2)
 
-    # data3 = find_rest_in_building(1140,"South_U_Restaurants.db")
+    data3 = find_rest_in_building(1140,"South_U_Restaurants.db")
     # print(data3)
 
-    # get_highest_rating("South_U_Restaurants.db")
+    get_highest_rating("South_U_Restaurants.db")
     pass
 
 class TestHW8(unittest.TestCase):

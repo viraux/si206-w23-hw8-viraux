@@ -2,7 +2,7 @@
 # Your student id: 6472 4356
 # Your email: ajdv@umich.edu
 # List who you have worked with on this homework:
-
+import matplotlib
 import matplotlib.pyplot as plt
 import os
 import sqlite3
@@ -34,6 +34,7 @@ def load_rest_data(db):
         d[name] = {'category':type, 'building':location,'rating':rating}
 
     # print(d)
+
     return d
 
 
@@ -48,6 +49,33 @@ def plot_rest_categories(db):
     restaurant categories and the values should be the number of restaurants in each category. The function should
     also create a bar chart with restaurant categories and the count of number of restaurants in each category.
     """
+    path = os.path.dirname(os.path.abspath(__file__))
+    conn = sqlite3.connect(path+'/'+db)
+    cur = conn.cursor()
+    d = {}
+    fig = plt.figure(figsize=(10,5))
+    ax = fig.add_subplot(111)
+    data = cur.execute("""SELECT * FROM Categories""").fetchall()
+    sorted_data = sorted(data, key=lambda x:x[1])
+    for cat in sorted_data:
+        count = cur.execute("""SELECT COUNT(category_id) FROM restaurants 
+        WHERE category_id = (?)""",(cat[0],)).fetchone()[0]
+        d[cat[1]] = count
+
+    # print(d)
+    desc_data = sorted(d.items(),key=lambda x:x[1])
+    # print(desc_data)
+    for i in range(len(desc_data)):
+        ax.barh(desc_data[i][0],desc_data[i][1], color='orange', linewidth=3)
+    ax.set_xlabel("Category")
+    ax.set_ylabel("Counts")
+
+    fig.savefig("part2_graph")
+
+    plt.show()
+    return d
+
+
     pass
 
 def find_rest_in_building(building_num, db):
@@ -75,6 +103,9 @@ def get_highest_rating(db): #Do this through DB as well
 #Try calling your functions here
 def main():
     data = load_rest_data("South_U_Restaurants.db")
+
+    data2 = plot_rest_categories("South_U_Restaurants.db")
+    # print(data2)
     pass
 
 class TestHW8(unittest.TestCase):
